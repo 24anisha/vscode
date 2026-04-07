@@ -105,7 +105,9 @@ function createMockPromptsService(files: IFixtureFile[], agentInstructions: IAge
 		override readonly onDidChangeSlashCommands = Event.None;
 		override readonly onDidChangeSkills = Event.None;
 		override readonly onDidChangeInstructions = Event.None;
+		override readonly onDidChangeHooks = Event.None;
 		override getDisabledPromptFiles(): ResourceSet { return new ResourceSet(); }
+		override getPromptLocationLabel() { return ''; }
 		override async listPromptFiles(type: PromptsType, _token: CancellationToken) {
 			return files.filter(f => f.type === type).map(f => ({
 				uri: f.uri,
@@ -134,6 +136,16 @@ function createMockPromptsService(files: IFixtureFile[], agentInstructions: IAge
 			return new ParsedPromptFile(uri, header as never);
 		}
 		override async getSourceFolders() { return [] as never[]; }
+		override async getInstructionFiles() {
+			return files.filter(f => f.type === PromptsType.instructions).map(f => ({
+				uri: f.uri,
+				name: f.name ?? 'instruction',
+				description: f.description,
+				storage: f.storage,
+				pattern: f.applyTo,
+				extension: toExtensionInfo(f) as never,
+			}));
+		}
 		override async findAgentSkills(): Promise<IAgentSkill[]> {
 			return files.filter(f => f.type === PromptsType.skill).map(f => ({
 				uri: f.uri,

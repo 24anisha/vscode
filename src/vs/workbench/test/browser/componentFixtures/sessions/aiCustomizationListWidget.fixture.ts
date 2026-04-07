@@ -51,7 +51,18 @@ function createMockPromptsService(instructionFiles: IFixtureInstructionFile[], a
 		override readonly onDidChangeCustomAgents = Event.None;
 		override readonly onDidChangeSlashCommands = Event.None;
 		override readonly onDidChangeSkills = Event.None;
+		override readonly onDidChangeInstructions = Event.None;
+		override readonly onDidChangeHooks = Event.None;
 		override getDisabledPromptFiles(): ResourceSet { return new ResourceSet(); }
+		override async getInstructionFiles() {
+			return instructionFiles.map(f => ({
+				uri: f.promptPath.uri,
+				name: f.name ?? 'instruction',
+				description: f.description,
+				storage: f.promptPath.storage,
+				pattern: f.applyTo,
+			}));
+		}
 		override async listPromptFiles(type: PromptsType) {
 			if (type === PromptsType.instructions) {
 				return instructionFiles.map(f => f.promptPath);
